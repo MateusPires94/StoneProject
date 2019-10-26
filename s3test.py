@@ -6,9 +6,10 @@ if platform.system() == 'Linux':
 else:
     TMP = 'C:/Users/mateus.ricardo/Desktop/tmp/'
 
-df_test = pd.DataFrame([{'a':1,'b':2}])
-s3 = auxtools.S3Aux('stone-project')
-local_filename = TMP +'test.csv'
-remote_filename = TMP+'logs/test.csv'
-df_test.to_csv(local_filename,index=False)
-s3.upload(local_filename,remote_filename)
+credenciais = auxtools.MySQLAux('MOVIE')
+print(credenciais.user,credenciais.host,credenciais.password,credenciais.database)
+cnx = auxtools.MySQLAux('MOVIE').connect()
+query = 'SELECT DISTINCT id_movie from movies_detail'
+df_movies_id = pd.read_sql(query,cnx)
+cnx.close()
+print(df_movies_id)
