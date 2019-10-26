@@ -73,8 +73,7 @@ def main():
         print(table_name)
         df_movies.apply(lambda x:generate_auxiliar_bridges(x,bridge_field,aux_list),axis=1)
         df_bridge = pd.DataFrame(aux_list)
-        df_bridge.to_sql(table_name, engine,
-                      if_exists='replace', index=False)
+        df_bridge.to_sql(table_name, engine, if_exists='replace', index=False)
 
     # --- PARTE 4 : Criando tabelas de links entre filmes e atributos de gênero, empresas produtoras e países produtores --- #
 
@@ -83,8 +82,7 @@ def main():
     for column in stringfy_columns:
         df_movies[column] = df_movies[column].apply(str)
 
-    df_movies.to_sql(movie_table_name, engine,
-                  if_exists='replace', index=False)
+    df_movies.to_sql(movie_table_name, engine, if_exists='replace', index=False)
     # --- PARTE 5 : Armazenando dados dos filmes no banco --- #
 if __name__ == '__main__':
     main()
