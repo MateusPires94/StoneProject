@@ -53,10 +53,10 @@ def main():
 
     # --- PARTE 3 : Pequeno tratamento dos dados --- #
     df_movies['belongs_to_collection'] = df_movies['belongs_to_collection'].apply(lambda x: int(x['id']) if not pd.isnull(x) else x)
-    df_movies['genres'] = df_movies['genres'].apply(lambda x: [int(y['id']) for y in x] if x else x)
-    df_movies['production_companies'] = df_movies['production_companies'].apply(lambda x: [int(y['id']) for y in x] if x else x)
-    df_movies['production_countries'] = df_movies['production_countries'].apply(lambda x: [y['name'] for y in x] if x else x)
-    df_movies['spoken_languages'] = df_movies['spoken_languages'].apply(lambda x: [y['name'] for y in x] if x else x)
+    df_movies['genres'] = df_movies['genres'].apply(lambda x: [int(y['id']) for y in x] if not pd.isnull(x) else x)
+    df_movies['production_companies'] = df_movies['production_companies'].apply(lambda x: [int(y['id']) for y in x] if not pd.isnull(x) else x)
+    df_movies['production_countries'] = df_movies['production_countries'].apply(lambda x: [y['name'] for y in x] if not pd.isnull(x) else x)
+    df_movies['spoken_languages'] = df_movies['spoken_languages'].apply(lambda x: [y['name'] for y in x] if not pd.isnull(x) else x)
 
     df_movies['id_movie'] = df_movies['id']
     df_movies = df_movies[['id_movie']+[z for z in df_movies.columns if z not in ['id_movie','id']]]
