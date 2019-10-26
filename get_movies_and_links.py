@@ -2,6 +2,7 @@ import pandas as pd
 import requests as r
 import json
 import auxtools
+import numbers
 
 movie_api_file = 'movie_key.json'
 api_key = auxtools.fetch_movie_api(movie_api_file)['api_key']
@@ -53,10 +54,10 @@ def main():
 
     # --- PARTE 3 : Pequeno tratamento dos dados --- #
     df_movies['belongs_to_collection'] = df_movies['belongs_to_collection'].apply(lambda x: int(x['id']) if not pd.isnull(x) else x)
-    df_movies['genres'] = df_movies['genres'].apply(lambda x: [int(y['id']) for y in x] if len(x) > 0 else x)
-    df_movies['production_companies'] = df_movies['production_companies'].apply(lambda x: [int(y['id']) for y in x] if len(x) else x)
-    df_movies['production_countries'] = df_movies['production_countries'].apply(lambda x: [y['name'] for y in x] if len(x) else x)
-    df_movies['spoken_languages'] = df_movies['spoken_languages'].apply(lambda x: [y['name'] for y in x] if len(x) else x)
+    df_movies['genres'] = df_movies['genres'].apply(lambda x: [int(y['id']) for y in x] if not isinstance(x, numbers.Number) else x)
+    df_movies['production_companies'] = df_movies['production_companies'].apply(lambda x: [int(y['id']) for y in x] if not isinstance(x, numbers.Number) else x)
+    df_movies['production_countries'] = df_movies['production_countries'].apply(lambda x: [y['name'] for y in x] if not isinstance(x, numbers.Number) else x)
+    df_movies['spoken_languages'] = df_movies['spoken_languages'].apply(lambda x: [y['name'] for y in x] if not isinstance(x, numbers.Number) else x)
 
     df_movies['id_movie'] = df_movies['id']
     df_movies = df_movies[['id_movie']+[z for z in df_movies.columns if z not in ['id_movie','id']]]
