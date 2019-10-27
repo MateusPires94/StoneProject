@@ -2,6 +2,7 @@ import pandas as pd
 import requests as r
 import json
 import auxtools
+import time
 
 movie_api_file = 'movie_key.json'
 api_key = auxtools.fetch_movie_api(movie_api_file)['api_key']
@@ -23,7 +24,14 @@ def main():
     for i,comp_id in enumerate(all_companies):
         url = get_companies_url.format(comp_id,api_key)
         print('{}/{}'.format(i+1,len(all_companies)))
-        results = json.loads(r.get(url).text)
+        results = r.get(url)
+        code = results.status_code
+        while code == 429:
+            time.sleep(2)
+            results = r.get(url)
+            code = results.status_code
+            print(code)
+        results = json.loads(results.text)
         companies_list.append(results)
     df_companies = pd.DataFrame(companies_list)
     # --- PARTE 2 : Iterando empresas e puxando dados  --- #

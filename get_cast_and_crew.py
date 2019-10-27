@@ -2,6 +2,7 @@ import pandas as pd
 import requests as r
 import json
 import auxtools
+import time
 
 movie_api_file = 'movie_key.json'
 api_key = auxtools.fetch_movie_api(movie_api_file)['api_key']
