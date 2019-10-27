@@ -39,6 +39,7 @@ def main():
     # --- PARTE 3 : Guardando dados de pessoas em tabela do banco  --- #
     df_people['id_person'] = df_people['id']
     df_people = df_people[['id_person']+[z for z in df_people.columns if z not in ['id_person','id']]]
+    df_people['also_known_as'] = df_people['also_known_as'].apply(str)
     engine = auxtools.MySQLAux("MOVIE").engine()
     df_people.to_sql(people_table_name, engine,
                   if_exists='replace', index=False)
