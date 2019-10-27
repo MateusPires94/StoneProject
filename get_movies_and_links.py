@@ -46,7 +46,9 @@ def main():
     for i,movie_id in enumerate(df_movies_id['id'].unique()):
         print('{}/{}'.format(i+1,len(df_movies_id)))
         url = get_movie_url.format(movie_id,api_key)
-        results = json.loads(r.get(url).text)
+        results = r.get(url)
+        print(movie_id,results.status_code)
+        results = json.loads(results.text)
         results['type'] = id_dict_aux[movie_id]
         movie_list.append(results)
     df_movies = pd.DataFrame(movie_list)
