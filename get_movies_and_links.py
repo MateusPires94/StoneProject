@@ -3,6 +3,7 @@ import requests as r
 import json
 import auxtools
 import numbers
+import time
 
 movie_api_file = 'movie_key.json'
 api_key = auxtools.fetch_movie_api(movie_api_file)['api_key']
@@ -47,7 +48,12 @@ def main():
         print('{}/{}'.format(i+1,len(df_movies_id)))
         url = get_movie_url.format(movie_id,api_key)
         results = r.get(url)
-        print(movie_id,results.status_code)
+        code = results.status_code
+        while code == 429:
+            time.sleep(5)
+            results = r.get(url)
+            code = results.status_code
+            print(code)
         results = json.loads(results.text)
         results['type'] = id_dict_aux[movie_id]
         movie_list.append(results)
