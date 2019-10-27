@@ -50,7 +50,7 @@ def main():
         results = r.get(url)
         code = results.status_code
         while code == 429:
-            time.sleep(5)
+            time.sleep(2)
             results = r.get(url)
             code = results.status_code
             print(code)

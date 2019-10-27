@@ -24,7 +24,14 @@ def main():
     for i,movie_id in enumerate(df_movies_id['id_movie'].unique()):
         print('{}/{}'.format(i+1,len(df_movies_id)))
         url = get_crew_and_cast_url.format(movie_id,api_key)
-        results = json.loads(r.get(url).text)
+        results = r.get(url)
+        code = results.status_code
+        while code == 429:
+            time.sleep(2)
+            results = r.get(url)
+            code = results.status_code
+            print(code)
+        results = json.loads(results.text)
         for cast in results['cast']:
             cast['fk_movie'] = movie_id
             cast_list.append(cast)
