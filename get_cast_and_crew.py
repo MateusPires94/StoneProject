@@ -8,23 +8,23 @@ movie_api_file = 'movie_key.json'
 api_key = auxtools.fetch_movie_api(movie_api_file)['api_key']
 
 def main():
-    get_crew_and_cast_url = 'https://api.themoviedb.org/3/movie/{}/credits?api_key={}'
-    cast_table_name = 'cast_credits'
-    crew_table_name = 'crew_credits'
+    get_crew_and_cast_url = 'https://api.themoviedb.org/3/person/{}/movie_credits?api_key={}&language=en-US'
+    cast_table_name = 'historical_cast_credits'
+    crew_table_name = 'historical_crew_credits'
 
-    # --- PARTE 1 : Consultando IDs dos Filmes  --- #
+    # --- PARTE 1 : Consultando IDs das Pessoas  --- #
     cnx = auxtools.MySQLAux('MOVIE').connect()
-    query = 'SELECT DISTINCT id_movie from movies_detail'
-    df_movies_id = pd.read_sql(query,cnx)
+    query = 'SELECT DISTINCT fk_person from current_cast_credits UNION ALL SELECT DISTINCT fk_person from current_crew_credits'
+    df_person_id = pd.read_sql(query,cnx)
     cnx.close()
-    # --- PARTE 1 : Consultando IDs dos Filmes  --- #
+    # --- PARTE 1 : Consultando IDs das Pessoas  --- #
 
-    # --- PARTE 2 : Iterando IDs dos Filmes para puxar cast e crew da API  --- #
+    # --- PARTE 2 : Iterando IDs das pessoas para puxar cast e crew da API  --- #
     crew_list = []
     cast_list = []
-    for i,movie_id in enumerate(df_movies_id['id_movie'].unique()):
-        print('{}/{}'.format(i+1,len(df_movies_id)))
-        url = get_crew_and_cast_url.format(movie_id,api_key)
+    for i,id_person in enumerate(df_person_id['fk_person'].unique()):
+        print('{}/{}'.format(i+1,len(df_person_id)))
+        url = get_crew_and_cast_url.format(id_person,api_key)
         results = r.get(url)
         code = results.status_code
         while code == 429:
@@ -34,28 +34,35 @@ def main():
             print(code)
         results = json.loads(results.text)
         for cast in results['cast']:
-            cast['fk_movie'] = movie_id
+            cast['fk_person'] = id_person
             cast_list.append(cast)
         for crew in results['crew']:
-            crew['fk_movie'] = movie_id
+            crew['fk_person'] = id_person
             crew_list.append(crew)
 
     df_cast = pd.DataFrame(cast_list).sort_values('cast_id')
     df_crew = pd.DataFrame(crew_list).sort_values('credit_id')
 
-    df_cast = df_cast[['credit_id','cast_id','fk_movie','character','order','id']]
+    df_cast = df_cast[['credit_id','cast_id','id','character','order','fk_person']]
     df_cast.columns = ['id_credit','id_cast','fk_movie','character','order','fk_person']
-    df_crew = df_crew[['credit_id','fk_movie','job','department','id']]
+    df_crew = df_crew[['credit_id','id','job','department','fk_person']]
     df_crew.columns = ['id_credit','fk_movie','job','department','fk_person']
-    # --- PARTE 2 : Iterando IDs dos Filmes para puxar cast e crew da API  --- #
+    # --- PARTE 2 : Iterando IDs das pessoas para puxar cast e crew da API  --- #
 
-    # --- PARTE 3 : Carregando dados nas tabelas  --- #
+
+    cnx = auxtools.MySQLAux('MOVIE').connect()
+    query = '''SELECT DISTINCT fk_person from current_crew_credits where job='Director' '''
+    director_list = list(pd.read_sql(query,cnx)['fk_person'].unique())
+    cnx.close()
+    df_cast['currently_directing'] = df_cast['fk_person'].apply(lambda x: 1 if x in director_list else 0)
+    df_crew['currently_directing'] = df_crew['fk_person'].apply(lambda x: 1 if x in director_list else 0)
+    # --- PARTE 4 : Carregando dados nas tabelas  --- #
     engine = auxtools.MySQLAux("MOVIE").engine()
     df_cast.to_sql(cast_table_name, engine,
                   if_exists='replace', index=False)
     df_crew.to_sql(crew_table_name, engine,
                   if_exists='replace', index=False)
-    # --- PARTE 3 : Carregando dados nas tabelas  --- #
+    # --- PARTE 4 : Carregando dados nas tabelas  --- #
 
 
 if __name__ == '__main__':
