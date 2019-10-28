@@ -42,7 +42,6 @@ def main():
                   'upcoming':'https://api.themoviedb.org/3/movie/upcoming?api_key={}&language=en-US&page={}&region=US'}
 
     id_list = []
-    id_dict_aux={}
     for k,v in get_all_movies_dict.items():
         page = '1'
         url = v.format(api_key,page)
@@ -57,8 +56,11 @@ def main():
                 id_dict['id_movie'] = movie['id']
                 id_dict['type'] = k
                 id_list.append(id_dict)
-                id_dict_aux[movie['id']] = k
     df_movies_id = pd.DataFrame(id_list)
+    engine = auxtools.MySQLAux("MOVIE").engine()
+    df_movies_id.to_sql('aux_movie_types', engine,
+                  if_exists='replace', index=False)
+
     # --- PARTE 1 : Carregando IDs dos Filmes nas APIS de now-playing e upcoming --- #
 
     # --- PARTE 2 : Iterando IDs dos Filmes para puxar cast e crew da API  --- #

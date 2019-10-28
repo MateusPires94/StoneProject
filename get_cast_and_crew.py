@@ -40,7 +40,7 @@ def main():
     crew_list = []
     cast_list = []
     for i,id_person in enumerate(df_person_id['fk_person'].unique()):
-        print('{}/{}'.format(i+1,len(df_person_id)))
+        print('{}/{} - {}'.format(i+1,len(df_person_id),id_person))
         url = get_crew_and_cast_url.format(id_person,api_key)
         results = r.get(url)
         code = results.status_code

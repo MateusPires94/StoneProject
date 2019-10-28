@@ -65,7 +65,11 @@ def main():
     df_movies['production_companies'] = df_movies['production_companies'].apply(lambda x: [int(y['id']) for y in x] if not isinstance(x, numbers.Number) else [])
     df_movies['production_countries'] = df_movies['production_countries'].apply(lambda x: [y['name'] for y in x] if not isinstance(x, numbers.Number) else [])
     df_movies['spoken_languages'] = df_movies['spoken_languages'].apply(lambda x: [y['name'] for y in x] if not isinstance(x, numbers.Number) else [])
-
+    df_movies['production_companies_count'] = df_movies['production_companies'].apply(lambda x:len(x))
+    df_movies['profit'] = df_movies['revenue'] - df_movies['budget']  
+    df_movies['revenue_per_company'] = df_movies.apply(lambda x:x['revenue']/x['production_companies_count'] if x['production_companies_count']>1 else x['revenue'],axis=1)
+    df_movies['budget_per_company'] = df_movies.apply(lambda x:x['budget']/x['production_companies_count'] if x['production_companies_count']>1 else x['budget'],axis=1)
+    df_movies['profit_per_company'] = df_movies.apply(lambda x:x['profit']/x['production_companies_count'] if x['production_companies_count']>1 else x['profit'],axis=1)
     df_movies['id_movie'] = df_movies['id']
     df_movies = df_movies[['id_movie']+[z for z in df_movies.columns if z not in ['id_movie','id']]]
     # --- PARTE 3 : Pequeno tratamento dos dados --- #
@@ -85,9 +89,12 @@ def main():
     # --- PARTE 4 : Criando tabelas de links entre filmes e atributos de gênero, empresas produtoras e países produtores --- #
 
     # --- PARTE 5 : Armazenando dados dos filmes no banco --- #
-    stringfy_columns = ['belongs_to_collection','genres','production_companies','production_countries','spoken_languages']
+    df_movies = df_movies[[ for x in df_movies.columns if z not in bridge_field]]
+    stringfy_columns = ['belongs_to_collection','spoken_languages']
     for column in stringfy_columns:
         df_movies[column] = df_movies[column].apply(str)
 
     df_movies.to_sql(movie_table_name, engine, if_exists='replace', index=False)
     # --- PARTE 5 : Armazenando dados dos filmes no banco --- #
+if __name__ == '__main__':
+    main()
