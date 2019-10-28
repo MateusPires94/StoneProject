@@ -25,15 +25,17 @@ use_controller = args.use
 Controler = auxtools.ExecutionController('MOVIE',use_controller=use_controller)
 
 def main():
-    production_companies_table_name = 'production_companies_options'
+    production_companies_table_name = 'current_production_companies_options'
     get_companies_url = 'https://api.themoviedb.org/3/company/{}?api_key={}'
 
-    # --- PARTE 1 : Consultando empresas existentes  --- #
+    # --- PARTE 1 : Consultando empresas existentes e presentes apenas em filmes em cartas ou em filmes que serão lançados em breve   --- #
     cnx = auxtools.MySQLAux('MOVIE').connect()
-    query = 'SELECT DISTINCT fk_production_companies from movies_detail_link_production_companies'
+    query = '''SELECT DISTINCT fk_production_companies from movies_detail_link_production_companies pc
+                JOIN aux_movie_types mt on mt.id_movie = pc.fk_movie
+    '''
     df_production_companies_id = pd.read_sql(query,cnx)
     cnx.close()
-    # --- PARTE 1 : Consultando empresas existentes  --- #
+    # --- PARTE 1 : Consultando empresas existentes e presentes apenas em filmes em cartas ou em filmes que serão lançados em breve   --- #
 
     # --- PARTE 2 : Iterando empresas e puxando dados  --- #
     all_companies = list(df_production_companies_id['fk_production_companies'].unique())

@@ -60,8 +60,8 @@ def main():
     df_cast = pd.DataFrame(cast_list).sort_values('credit_id')
     df_crew = pd.DataFrame(crew_list).sort_values('credit_id')
 
-    df_cast = df_cast[['credit_id','id','character','order','fk_person']]
-    df_cast.columns = ['id_credit','fk_movie','character','order','fk_person']
+    df_cast = df_cast[['credit_id','id','character','fk_person']]
+    df_cast.columns = ['id_credit','fk_movie','character','fk_person']
     df_crew = df_crew[['credit_id','id','job','department','fk_person']]
     df_crew.columns = ['id_credit','fk_movie','job','department','fk_person']
     # --- PARTE 2 : Iterando IDs das pessoas para puxar cast e crew da API  --- #
