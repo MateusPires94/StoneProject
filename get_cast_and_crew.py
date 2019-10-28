@@ -106,8 +106,7 @@ if __name__ == '__main__':
             Controller.set_to_fail()
             Controller.write_to_log('Error trying to run script {}'.format(script_name))
             Controller.write_to_log(e)
-            mail = auxtools.MailAux()
-            mail.send_mail('STONE-PROJECT-ERROR','Baixe o log aqui: {}'.format(Controller.s3_link),'MOVIES','mateusricardo94@gmail.com','mateus.ricardo@mobly.com.br')
+            Controller.send_mail()
     else:
         Controller.write_to_log('skipping script {} due previous error'.format(script_name))
     Controller.send_log_to_s3()
