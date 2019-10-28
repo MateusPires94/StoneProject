@@ -4,6 +4,7 @@ import json
 import auxtools
 import time
 import argparse
+import datetime
 
 movie_api_file = 'movie_key.json'
 api_key = auxtools.fetch_movie_api(movie_api_file)['api_key']
