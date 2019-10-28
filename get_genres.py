@@ -2,9 +2,26 @@ import pandas as pd
 import requests as r
 import json
 import auxtools
+import argparse
 
 movie_api_file = 'movie_key.json'
 api_key = auxtools.fetch_movie_api(movie_api_file)['api_key']
+
+def args_setup():
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-u", "--use", help="use controller", default=0)
+
+    args = parser.parse_args()
+
+    return args
+
+
+args = args_setup()
+use_controller = args.use
+
+Controler = auxtools.ExecutionController('MOVIE',use_controller=use_controller)
 
 def main():
     genres_url = 'https://api.themoviedb.org/3/genre/movie/list?api_key={}&language=en-US'.format(api_key)
