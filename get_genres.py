@@ -43,7 +43,6 @@ def main():
     df_genres.to_sql(genre_table_name, engine,
                   if_exists='replace', index=False)
     auxtools.MySQLAux("MOVIE").create_indexes(genre_table_name,['id_genres'])
-    (1170, "BLOB/TEXT column 'id_credit' used in key specification without a key length")
 if __name__ == '__main__':
     script_name = __file__.split('\\')[-1]
     Controller.write_to_log('starting script {}'.format(script_name))

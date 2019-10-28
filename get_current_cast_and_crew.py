@@ -35,7 +35,6 @@ def args_setup():
 
 args = args_setup()
 use_controller = int(args.use)
-print(use_controller)
 
 Controller = auxtools.ExecutionController('MOVIE',TMP=TMP,use_controller=use_controller)
 

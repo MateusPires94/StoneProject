@@ -14,6 +14,7 @@ df = pd.DataFrame([{'id_execution':0,
 	'finish':datetime.datetime.now(),
 	's3_link':'NA',
 	'status':'SUCCESS'}])
+df = df[['id_execution','start','finish','s3_link','status']]
 df.to_sql('control_table', engine,
               if_exists='replace', index=False)
 
