@@ -100,7 +100,7 @@ def main():
     # --- PARTE 2 : Iterando IDs dos Filmes para puxar cast e crew da API  --- #
 
     # --- PARTE 3 : Carregando dados nas tabelas  --- #
-    index_list = ['fk_movie','fk_person']
+    index_list = ['id_credit','fk_movie','fk_person']
     engine = auxtools.MySQLAux("MOVIE").engine()
     df_cast.to_sql(cast_table_name, engine,
                   if_exists='replace', index=False)
