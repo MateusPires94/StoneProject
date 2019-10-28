@@ -104,7 +104,7 @@ def main():
     # --- PARTE 5 : Criando tabelas de links entre filmes e atributos de gênero, empresas produtoras e países produtores --- #
 
     # --- PARTE 6 : Armazenando dados dos filmes no banco --- #
-    df_movies = df_movies[[ for x in df_movies.columns if z not in bridge_field]]
+    df_movies = df_movies[[z for z in df_movies.columns if z not in bridge_fields]]
     stringfy_columns = ['belongs_to_collection','spoken_languages']
     for column in stringfy_columns:
         df_movies[column] = df_movies[column].apply(str)
