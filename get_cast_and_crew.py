@@ -25,6 +25,7 @@ use_controller = args.use
 Controler = auxtools.ExecutionController('MOVIE',use_controller=use_controller)
 
 def main():
+    years = 20
     get_crew_and_cast_url = 'https://api.themoviedb.org/3/person/{}/movie_credits?api_key={}&language=en-US'
     cast_table_name = 'historical_cast_credits'
     crew_table_name = 'historical_crew_credits'
@@ -39,6 +40,7 @@ def main():
     # --- PARTE 2 : Iterando IDs das pessoas para puxar cast e crew da API  --- #
     crew_list = []
     cast_list = []
+    min_date = str(datetime.date.today() - datetime.timedelta(days=years*365))
     for i,id_person in enumerate(df_person_id['fk_person'].unique()):
         print('{}/{} - {}'.format(i+1,len(df_person_id),id_person))
         url = get_crew_and_cast_url.format(id_person,api_key)
@@ -52,10 +54,12 @@ def main():
         results = json.loads(results.text)
         for cast in results['cast']:
             cast['fk_person'] = id_person
-            cast_list.append(cast)
+            if cast['release_date']>min_date:
+                cast_list.append(cast)
         for crew in results['crew']:
             crew['fk_person'] = id_person
-            crew_list.append(crew)
+            if crew['release_date']>min_date:
+                crew_list.append(crew)
 
     df_cast = pd.DataFrame(cast_list).sort_values('credit_id')
     df_crew = pd.DataFrame(crew_list).sort_values('credit_id')
