@@ -101,6 +101,8 @@ def main():
         df_movies.apply(lambda x:generate_auxiliar_bridges(x,bridge_field,aux_list),axis=1)
         df_bridge = pd.DataFrame(aux_list)
         df_bridge.to_sql(table_name, engine, if_exists='replace', index=False)
+        index_list = ['fk_'+bridge_field,'fk_movie']
+        auxtools.MySQLAux("MOVIE").create_indexes(table_name,index_list)
 
     # --- PARTE 5 : Criando tabelas de links entre filmes e atributos de gênero, empresas produtoras e países produtores --- #
 
@@ -111,6 +113,8 @@ def main():
         df_movies[column] = df_movies[column].apply(str)
 
     df_movies.to_sql(movie_table_name, engine, if_exists='replace', index=False)
+    index_list = ['id_movie','release_date','type']
+    auxtools.MySQLAux("MOVIE").create_indexes(movie_table_name,index_list)
     # --- PARTE 6 : Armazenando dados dos filmes no banco --- #
 if __name__ == '__main__':
     script_name = __file__.split('\\')[-1]

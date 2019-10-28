@@ -67,6 +67,7 @@ def main():
     engine = auxtools.MySQLAux("MOVIE").engine()
     df_companies.to_sql(production_companies_table_name, engine,
                   if_exists='replace', index=False)
+    auxtools.MySQLAux("MOVIE").create_indexes(production_companies_table_name,['id_production_companies'])
     # --- PARTE 3 : Carregando dados em tabela do banco  --- #
 if __name__ == '__main__':
     script_name = __file__.split('\\')[-1]

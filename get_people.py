@@ -66,6 +66,7 @@ def main():
     engine = auxtools.MySQLAux("MOVIE").engine()
     df_people.to_sql(people_table_name, engine,
                   if_exists='replace', index=False)
+    auxtools.MySQLAux("MOVIE").create_indexes(people_table_name,['id_person'])
     # --- PARTE 3 : Guardando dados de pessoas em tabela do banco  --- #
 if __name__ == '__main__':
     script_name = __file__.split('\\')[-1]

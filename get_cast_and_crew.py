@@ -87,11 +87,14 @@ def main():
     df_cast['currently_directing'] = df_cast['fk_person'].apply(lambda x: 1 if x in director_list else 0)
     df_crew['currently_directing'] = df_crew['fk_person'].apply(lambda x: 1 if x in director_list else 0)
     # --- PARTE 4 : Carregando dados nas tabelas  --- #
+    index_list = ['fk_movie','fk_person']
     engine = auxtools.MySQLAux("MOVIE").engine()
     df_cast.to_sql(cast_table_name, engine,
                   if_exists='replace', index=False)
+    auxtools.MySQLAux("MOVIE").create_indexes(cast_table_name,index_list)
     df_crew.to_sql(crew_table_name, engine,
                   if_exists='replace', index=False)
+    auxtools.MySQLAux("MOVIE").create_indexes(crew_table_name,index_list)
     # --- PARTE 4 : Carregando dados nas tabelas  --- #
 
 

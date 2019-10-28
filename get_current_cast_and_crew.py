@@ -100,11 +100,14 @@ def main():
     # --- PARTE 2 : Iterando IDs dos Filmes para puxar cast e crew da API  --- #
 
     # --- PARTE 3 : Carregando dados nas tabelas  --- #
+    index_list = ['fk_movie','fk_person']
     engine = auxtools.MySQLAux("MOVIE").engine()
     df_cast.to_sql(cast_table_name, engine,
                   if_exists='replace', index=False)
+    auxtools.MySQLAux("MOVIE").create_indexes(cast_table_name,index_list)
     df_crew.to_sql(crew_table_name, engine,
                   if_exists='replace', index=False)
+    auxtools.MySQLAux("MOVIE").create_indexes(crew_table_name,index_list)
     # --- PARTE 3 : Carregando dados nas tabelas  --- #
 
 if __name__ == '__main__':
@@ -115,6 +118,7 @@ if __name__ == '__main__':
             main()
             Controller.write_to_log('finishing script {}'.format(script_name))
         except Exception as e:
+            print('Error:')
             print(e)
             Controller.set_to_fail()
             Controller.write_to_log('Error trying to run script {}'.format(script_name))
