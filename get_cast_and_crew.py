@@ -103,6 +103,7 @@ if __name__ == '__main__':
             main()
             Controller.write_to_log('finishing script {}'.format(script_name))
         except Exception as e:
+            print(e)
             Controller.set_to_fail()
             Controller.write_to_log('Error trying to run script {}'.format(script_name))
             Controller.write_to_log(e)

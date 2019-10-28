@@ -60,7 +60,6 @@ def main():
             code = results.status_code
             print(code)
         results = json.loads(results.text)
-        results['type'] = id_dict_aux[movie_id]
         movie_list.append(results)
     df_movies = pd.DataFrame(movie_list)
     # --- PARTE 2 : Iterando na API de detalhes dos filmes e armazenando os dados em um DataFrame --- #
@@ -119,6 +118,7 @@ if __name__ == '__main__':
             main()
             Controller.write_to_log('finishing script {}'.format(script_name))
         except Exception as e:
+            print(e)
             Controller.set_to_fail()
             Controller.write_to_log('Error trying to run script {}'.format(script_name))
             Controller.write_to_log(e)
