@@ -55,12 +55,14 @@ def main():
         results = json.loads(results.text)
         for cast in results['cast']:
             cast['fk_person'] = id_person
-            if cast['release_date']>min_date:
-                cast_list.append(cast)
+            if 'release_date' in cast:
+                if cast['release_date']>min_date:
+                    cast_list.append(cast)
         for crew in results['crew']:
             crew['fk_person'] = id_person
-            if crew['release_date']>min_date:
-                crew_list.append(crew)
+            if 'release_date' in crew:
+                if crew['release_date']>min_date:
+                    crew_list.append(crew)
 
     df_cast = pd.DataFrame(cast_list).sort_values('credit_id')
     df_crew = pd.DataFrame(crew_list).sort_values('credit_id')
