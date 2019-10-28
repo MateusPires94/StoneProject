@@ -25,7 +25,7 @@ use_controller = args.use
 Controler = auxtools.ExecutionController('MOVIE',use_controller=use_controller)
 
 def main():
-    people_table_name = 'people_info'
+    people_table_name = 'current_people_info'
     get_person_url = 'https://api.themoviedb.org/3/person/{}?api_key={}&language=en-US'
 
     # --- PARTE 1 : Consultando todas as pessoas existentes na tabela de cast e de crew  --- #

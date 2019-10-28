@@ -74,7 +74,16 @@ def main():
     df_movies = df_movies[['id_movie']+[z for z in df_movies.columns if z not in ['id_movie','id']]]
     # --- PARTE 3 : Pequeno tratamento dos dados --- #
 
-    # --- PARTE 4 : Criando tabelas no banco de links entre filmes e atributos de gênero, empresas produtoras e países produtores --- #
+    # --- PARTE 4 : Aplicando flag de tipo do filme('now_playing','upcoming','old') --- #
+    cnx = auxtools.MySQLAux('MOVIE').connect()
+    query = '''SELECT * FROM aux_movie_types '''
+    df_movie_types = pd.read_sql(query,cnx)
+    cnx.close()
+    df_movies = pd.merge(df_movies,df_movie_types,how='left',on='id_movie')
+    df_movies['type'] = df_movies['type'].fillna('old')
+    # --- PARTE 4 : Aplicando flag de tipo do filme('now_playing','upcoming','old') --- # 
+
+    # --- PARTE 5 : Criando tabelas no banco de links entre filmes e atributos de gênero, empresas produtoras e países produtores --- #
 
     engine = auxtools.MySQLAux("MOVIE").engine()
     bridge_fields = ['genres','production_countries','production_companies']
@@ -86,15 +95,15 @@ def main():
         df_bridge = pd.DataFrame(aux_list)
         df_bridge.to_sql(table_name, engine, if_exists='replace', index=False)
 
-    # --- PARTE 4 : Criando tabelas de links entre filmes e atributos de gênero, empresas produtoras e países produtores --- #
+    # --- PARTE 5 : Criando tabelas de links entre filmes e atributos de gênero, empresas produtoras e países produtores --- #
 
-    # --- PARTE 5 : Armazenando dados dos filmes no banco --- #
+    # --- PARTE 6 : Armazenando dados dos filmes no banco --- #
     df_movies = df_movies[[ for x in df_movies.columns if z not in bridge_field]]
     stringfy_columns = ['belongs_to_collection','spoken_languages']
     for column in stringfy_columns:
         df_movies[column] = df_movies[column].apply(str)
 
     df_movies.to_sql(movie_table_name, engine, if_exists='replace', index=False)
-    # --- PARTE 5 : Armazenando dados dos filmes no banco --- #
+    # --- PARTE 6 : Armazenando dados dos filmes no banco --- #
 if __name__ == '__main__':
     main()
