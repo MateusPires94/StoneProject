@@ -50,7 +50,7 @@ def main():
 
     # --- PARTE 2 : Iterando na API de detalhes dos filmes e armazenando os dados em um DataFrame --- #
     movie_list = []
-    for i,movie_id in enumerate(df_movies_id['fk_movie'].unique()[0:500]):
+    for i,movie_id in enumerate(df_movies_id['fk_movie'].unique()):
         print('{}/{}'.format(i+1,len(df_movies_id)))
         url = get_movie_url.format(movie_id,api_key)
         results = r.get(url)
