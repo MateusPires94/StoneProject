@@ -4,6 +4,7 @@ import json
 import auxtools
 import numbers
 import time
+import argparse
 
 movie_api_file = 'movie_key.json'
 api_key = auxtools.fetch_movie_api(movie_api_file)['api_key']
@@ -15,36 +16,34 @@ def generate_auxiliar_bridges(x,bridge_field,aux_list):
         aux_dict['fk_'+bridge_field] = element
         aux_list.append(aux_dict)
 
-def main():
-    # --- PARTE 1 : Carregando IDs dos Filmes nas APIS de now-playing e upcoming --- #
-    movie_table_name = 'movies_detail'
-    get_movie_url = 'https://api.themoviedb.org/3/movie/{}?api_key={}&language=en-US'
-    get_all_movies_dict = {'now_playing':'https://api.themoviedb.org/3/movie/now_playing?api_key={}&language=en-US&page={}&region=US',
-                  'upcoming':'https://api.themoviedb.org/3/movie/upcoming?api_key={}&language=en-US&page={}&region=US'}
+def args_setup():
 
-    id_list = []
-    id_dict_aux={}
-    for k,v in get_all_movies_dict.items():
-        page = '1'
-        url = v.format(api_key,page)
-        results = json.loads(r.get(url).text)
-        print(results['total_results'])
-        pages = int(results['total_pages'])
-        for page in range(1,pages+1):
-            url = v.format(api_key,page)
-            results = json.loads(r.get(url).text)
-            for movie in results['results']:
-                id_dict = {}
-                id_dict['id'] = movie['id']
-                id_dict['type'] = k
-                id_list.append(id_dict)
-                id_dict_aux[movie['id']] = k
-    df_movies_id = pd.DataFrame(id_list)
-    # --- PARTE 1 : Carregando IDs dos Filmes nas APIS de now-playing e upcoming --- #
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-u", "--use", help="use controller", default=0)
+
+    args = parser.parse_args()
+
+    return args
+
+
+args = args_setup()
+use_controller = args.use
+
+Controler = auxtools.ExecutionController('MOVIE',use_controller=use_controller)
+
+def main(): 
+
+    # --- PARTE 1 : Trazendo Filmes históricos de todo o elenco presente nos filmes atuais --- #
+    cnx = auxtools.MySQLAux('MOVIE').connect()
+    query = 'SELECT DISTINCT fk_movie from historical_cast_credits UNION ALL SELECT DISTINCT fk_movie from historical_cast_credits'
+    df_movies_id = pd.read_sql(query,cnx)
+    cnx.close()
+    # --- PARTE 1 : Trazendo Filmes históricos de todo o elenco presente nos filmes atuais --- #
 
     # --- PARTE 2 : Iterando na API de detalhes dos filmes e armazenando os dados em um DataFrame --- #
     movie_list = []
-    for i,movie_id in enumerate(df_movies_id['id'].unique()):
+    for i,movie_id in enumerate(df_movies_id['fk_movie'].unique()):
         print('{}/{}'.format(i+1,len(df_movies_id)))
         url = get_movie_url.format(movie_id,api_key)
         results = r.get(url)
@@ -92,5 +91,3 @@ def main():
 
     df_movies.to_sql(movie_table_name, engine, if_exists='replace', index=False)
     # --- PARTE 5 : Armazenando dados dos filmes no banco --- #
-if __name__ == '__main__':
-    main()

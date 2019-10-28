@@ -7,6 +7,22 @@ import time
 movie_api_file = 'movie_key.json'
 api_key = auxtools.fetch_movie_api(movie_api_file)['api_key']
 
+def args_setup():
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-u", "--use", help="use controller", default=0)
+
+    args = parser.parse_args()
+
+    return args
+
+
+args = args_setup()
+use_controller = args.use
+
+Controler = auxtools.ExecutionController('MOVIE',use_controller=use_controller)
+
 def main():
     get_crew_and_cast_url = 'https://api.themoviedb.org/3/person/{}/movie_credits?api_key={}&language=en-US'
     cast_table_name = 'historical_cast_credits'
@@ -40,11 +56,11 @@ def main():
             crew['fk_person'] = id_person
             crew_list.append(crew)
 
-    df_cast = pd.DataFrame(cast_list).sort_values('cast_id')
+    df_cast = pd.DataFrame(cast_list).sort_values('credit_id')
     df_crew = pd.DataFrame(crew_list).sort_values('credit_id')
 
-    df_cast = df_cast[['credit_id','cast_id','id','character','order','fk_person']]
-    df_cast.columns = ['id_credit','id_cast','fk_movie','character','order','fk_person']
+    df_cast = df_cast[['credit_id','id','character','order','fk_person']]
+    df_cast.columns = ['id_credit','fk_movie','character','order','fk_person']
     df_crew = df_crew[['credit_id','id','job','department','fk_person']]
     df_crew.columns = ['id_credit','fk_movie','job','department','fk_person']
     # --- PARTE 2 : Iterando IDs das pessoas para puxar cast e crew da API  --- #
