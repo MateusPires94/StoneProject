@@ -1,1 +1,1 @@
-kill -9 $(pgrep -f myName)
+kill -9 $(pgrep -f run_dag)
