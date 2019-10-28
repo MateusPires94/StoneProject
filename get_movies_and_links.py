@@ -43,15 +43,16 @@ def main():
     get_movie_url = 'https://api.themoviedb.org/3/movie/{}?api_key={}&language=en-US'
     # --- PARTE 1 : Trazendo Filmes históricos de todo o elenco presente nos filmes atuais --- #
     cnx = auxtools.MySQLAux('MOVIE').connect()
-    query = 'SELECT DISTINCT fk_movie from historical_cast_credits UNION ALL SELECT DISTINCT fk_movie from historical_cast_credits'
+    query = 'SELECT DISTINCT fk_movie from historical_cast_credits UNION ALL SELECT DISTINCT fk_movie from historical_crew_credits'
     df_movies_id = pd.read_sql(query,cnx)
     cnx.close()
     # --- PARTE 1 : Trazendo Filmes históricos de todo o elenco presente nos filmes atuais --- #
 
     # --- PARTE 2 : Iterando na API de detalhes dos filmes e armazenando os dados em um DataFrame --- #
+    all_movies = df_movies_id['fk_movie'].unique()
     movie_list = []
-    for i,movie_id in enumerate(df_movies_id['fk_movie'].unique()):
-        print('{}/{}'.format(i+1,len(df_movies_id)))
+    for i,movie_id in enumerate(all_movies):
+        print('{}/{}'.format(i+1,len(all_movies)))
         url = get_movie_url.format(movie_id,api_key)
         results = r.get(url)
         code = results.status_code
