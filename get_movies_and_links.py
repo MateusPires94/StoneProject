@@ -39,7 +39,8 @@ use_controller = args.use
 Controller = auxtools.ExecutionController('MOVIE',TMP=TMP,use_controller=use_controller)
 
 def main(): 
-
+    movie_table_name = 'movies_detail'
+    get_movie_url = 'https://api.themoviedb.org/3/movie/{}?api_key={}&language=en-US'
     # --- PARTE 1 : Trazendo Filmes históricos de todo o elenco presente nos filmes atuais --- #
     cnx = auxtools.MySQLAux('MOVIE').connect()
     query = 'SELECT DISTINCT fk_movie from historical_cast_credits UNION ALL SELECT DISTINCT fk_movie from historical_cast_credits'
