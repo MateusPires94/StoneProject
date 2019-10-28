@@ -8,15 +8,25 @@ else:
     TMP = 'C:/Users/mateus.ricardo/Desktop/tmp/'
 
 
-df = pd.DataFrame([{'a':1,'b':2}])
-print(df)
-local_file = TMP+'teste_public.csv'
-remote_file = 'logs/teste_public.csv'
-df.to_csv(local_file,index=False)
-s3 = auxtools.S3Aux('stone-project')
-s3.upload(local_file,remote_file,public=True)
+engine = auxtools.MySQLAux('MOVIE').engine()
+df = pd.DataFrame([{'id_execution':0,
+	'start':datetime.datetime.now(),
+	'finish':datetime.datetime.now(),
+	's3_link':'NA',
+	'status':'SUCCESS'}])
+df.to_sql('control_table', engine,
+              if_exists='replace', index=False)
 
+# print(df)
+# local_file = TMP+'teste_public.csv'
+# remote_file = 'logs/teste_public.csv'
+# df.to_csv(local_file,index=False)
+# s3 = auxtools.S3Aux('stone-project')
+# s3.upload(local_file,remote_file,public=True)
 
+# min_date = str(datetime.date.today() - datetime.timedelta(days=20*365))
+# print('2019-01-08'>min_date)
+# print('1019-01-08'>min_date)
 
 
 # print(__file__.split('\\')[-1])

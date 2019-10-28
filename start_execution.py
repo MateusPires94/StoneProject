@@ -1,6 +1,12 @@
 import pandas as pd
 import json
 import auxtools
+import platform
 
-Controler = auxtools.ExecutionController('MOVIE',use_controller=1)
-Controler.start_new_execution()
+if platform.system() == 'Linux':
+    TMP = '/tmp/'
+else:
+    TMP = 'C:/Users/mateus.ricardo/Desktop/tmp/'
+
+Controller = auxtools.ExecutionController('MOVIE',TMP=TMP,use_controller=1)
+Controller.start_new_execution()
