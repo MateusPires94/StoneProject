@@ -30,7 +30,7 @@ def main():
 
     # --- PARTE 1 : Consultando todas as pessoas existentes na tabela de cast e de crew  --- #
     cnx = auxtools.MySQLAux('MOVIE').connect()
-    query = 'SELECT DISTINCT fk_person from current_cast_credits UNION ALL SELECT DISTINCT fk_person from current_cast_credits'
+    query = 'SELECT DISTINCT fk_person from current_cast_credits UNION ALL SELECT DISTINCT fk_person from current_crew_credits'
     df_person_id = pd.read_sql(query,cnx)
     cnx.close()
     all_people = list(df_person_id['fk_person'].unique())
