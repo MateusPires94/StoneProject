@@ -33,7 +33,6 @@ Controller = auxtools.ExecutionController('MOVIE',TMP=TMP,use_controller=use_con
 
 def main():
     years = 20
-    a=b
     get_crew_and_cast_url = 'https://api.themoviedb.org/3/person/{}/movie_credits?api_key={}&language=en-US'
     cast_table_name = 'historical_cast_credits'
     crew_table_name = 'historical_crew_credits'
